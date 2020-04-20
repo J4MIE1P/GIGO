@@ -1,0 +1,95 @@
+//Set to N/A if not a classification task
+function setByClassification() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheets = ss.getSheets();
+  var col = 7;
+  
+  //Get all non-classification articles
+  var arr = [];
+  sheet = sheets[0];
+  var data = sheet.getDataRange().getValues();
+  for (var row = 1; row <= 200; row++) {
+    if (data[row][col] == "no") {
+      arr.push(row);
+    }
+  }
+
+  //Set all later categories to N/A if not a classification task
+  for (var sheetNum = 1; sheetNum <= 15; sheetNum++) {
+    sheet = sheets[sheetNum];
+    var data = sheet.getDataRange().getValues();
+    for (var i = 0; i < arr.length; i++) {
+      var row = arr[i];
+      if (data[row][col] != "N/A") {
+        sheet.getRange(row+1, col+1).setValue("N/A");
+        Logger.log("Set (" + (row + 1) + "," + (col + 1) + ") to N/A in Spreadsheet " + sheetNum);
+      }
+    }
+  }
+  
+  Logger.log("Finished setting N/A by Classification");
+}
+
+//Set to N/A if machine annotated
+function setByAnnotation() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheets = ss.getSheets();
+  var col = 7;
+  
+  //Get all non-classification articles
+  var arr = [];
+  sheet = sheets[2];
+  var data = sheet.getDataRange().getValues();
+  for (var row = 1; row <= 200; row++) {
+    if (data[row][col] == "No / machine-labeled") {
+      arr.push(row);
+    }
+  }
+
+  //Set all later categories to N/A if machine-labeled
+  for (var sheetNum = 3; sheetNum <= 15; sheetNum++) {
+    sheet = sheets[sheetNum];
+    var data = sheet.getDataRange().getValues();
+    for (var i = 0; i < arr.length; i++) {
+      var row = arr[i];
+      if (data[row][col] != "N/A") {
+        sheet.getRange(row+1, col+1).setValue("N/A");
+        Logger.log("Set (" + (row + 1) + "," + (col + 1) + ") to N/A in Spreadsheet " + sheetNum);
+      }
+    }
+  }
+  
+  Logger.log("Finished setting N/A by Machine-Labeled");
+}
+
+//Set to N/A if used external annotation
+function setByExternal() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheets = ss.getSheets();
+  var col = 7;
+  
+  //Get all non-classification articles
+  var arr = [];
+  sheet = sheets[4];
+  var data = sheet.getDataRange().getValues();
+  for (var row = 1; row <= 200; row++) {
+    if (data[row][col] == "Only external") {
+      arr.push(row);
+    }
+  }
+
+  //Set all later categories to N/A if external
+  for (var sheetNum = 5; sheetNum <= 15; sheetNum++) {
+    sheet = sheets[sheetNum];
+    var data = sheet.getDataRange().getValues();
+    for (var i = 0; i < arr.length; i++) {
+      var row = arr[i];
+      if (data[row][col] != "N/A") {
+        sheet.getRange(row+1, col+1).setValue("N/A");
+        Logger.log("Set (" + (row + 1) + "," + (col + 1) + ") to N/A in Spreadsheet " + sheetNum);
+      }
+    }
+  }
+  
+  Logger.log("Finished setting N/A by External");
+}
