@@ -13,7 +13,7 @@ function setByClassification() {
       arr.push(row);
     }
   }
-
+  
   //Set all later categories to N/A if not a classification task
   for (var sheetNum = 1; sheetNum <= 15; sheetNum++) {
     sheet = sheets[sheetNum];
@@ -22,11 +22,10 @@ function setByClassification() {
       var row = arr[i];
       if (data[row][col] != "N/A") {
         sheet.getRange(row+1, col+1).setValue("N/A");
-        Logger.log("Set (" + (row + 1) + "," + (col + 1) + ") to N/A in Spreadsheet " + sheetNum);
+        Logger.log("Set (" + (row + 1) + "," + (col + 1) + ") to N/A in " + sheets[sheetNum].getName());
       }
     }
   }
-  
   Logger.log("Finished setting N/A by Classification");
 }
 
@@ -36,7 +35,7 @@ function setByAnnotation() {
   var sheets = ss.getSheets();
   var col = 7;
   
-  //Get all non-classification articles
+  //Get all machine-labeled articles
   var arr = [];
   sheet = sheets[2];
   var data = sheet.getDataRange().getValues();
@@ -45,7 +44,7 @@ function setByAnnotation() {
       arr.push(row);
     }
   }
-
+  
   //Set all later categories to N/A if machine-labeled
   for (var sheetNum = 3; sheetNum <= 15; sheetNum++) {
     sheet = sheets[sheetNum];
@@ -54,11 +53,10 @@ function setByAnnotation() {
       var row = arr[i];
       if (data[row][col] != "N/A") {
         sheet.getRange(row+1, col+1).setValue("N/A");
-        Logger.log("Set (" + (row + 1) + "," + (col + 1) + ") to N/A in Spreadsheet " + sheetNum);
+        Logger.log("Set (" + (row + 1) + "," + (col + 1) + ") to N/A in " + sheets[sheetNum].getName());
       }
     }
   }
-  
   Logger.log("Finished setting N/A by Machine-Labeled");
 }
 
@@ -68,7 +66,7 @@ function setByExternal() {
   var sheets = ss.getSheets();
   var col = 7;
   
-  //Get all non-classification articles
+  //Get all external articles
   var arr = [];
   sheet = sheets[4];
   var data = sheet.getDataRange().getValues();
@@ -77,7 +75,7 @@ function setByExternal() {
       arr.push(row);
     }
   }
-
+  
   //Set all later categories to N/A if external
   for (var sheetNum = 5; sheetNum <= 15; sheetNum++) {
     sheet = sheets[sheetNum];
@@ -86,10 +84,106 @@ function setByExternal() {
       var row = arr[i];
       if (data[row][col] != "N/A") {
         sheet.getRange(row+1, col+1).setValue("N/A");
-        Logger.log("Set (" + (row + 1) + "," + (col + 1) + ") to N/A in Spreadsheet " + sheetNum);
+        Logger.log("Set (" + (row + 1) + "," + (col + 1) + ") to N/A in " + sheets[sheetNum].getName());
+      }
+    }
+  } 
+  Logger.log("Finished setting N/A by External");
+}
+
+//Set to no access if 1st spreadsheet shows no access
+function setNoAccess() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheets = ss.getSheets();
+  var col = 7;
+  
+  //Get all no access articles
+  var arr = [];
+  sheet = sheets[0];
+  var data = sheet.getDataRange().getValues();
+  for (var row = 1; row <= 200; row++) {
+    if (data[row][col] == "no access") {
+      arr.push(row);
+    }
+  }
+  
+  //Set all later categories to no access
+  for (var sheetNum = 1; sheetNum <= 15; sheetNum++) {
+    sheet = sheets[sheetNum];
+    var data = sheet.getDataRange().getValues();
+    for (var i = 0; i < arr.length; i++) {
+      var row = arr[i];
+      if (data[row][col] != "no access") {
+        sheet.getRange(row+1, col+1).setValue("no access");
+        Logger.log("Set " + (row + 1) + " to no access in " + sheets[sheetNum].getName());
+      }
+    }
+  }
+  Logger.log("Finished setting no access");
+}
+
+//Check if a box should be N/A or not
+function checkifValidNA() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheets = ss.getSheets();
+  var col = 7;
+  var arr = [];
+  
+  //Get all non-classification articles
+  sheet = sheets[0];
+  var data = sheet.getDataRange().getValues();
+  for (var row = 1; row <= 200; row++) {
+    if (data[row][col] == "no") {
+      arr.push(row);
+    }
+  }
+  //Check for incorrect N/As
+  for (var sheetNum = 1; sheetNum <= 2; sheetNum++) {
+    sheet = sheets[sheetNum];
+    var data = sheet.getDataRange().getValues();
+    for (var row = 1; row <= 200; row++) {
+      if (data[row][col] == "N/A" && arr.indexOf(row) == -1) {
+        Logger.log("Check item " + (row + 1) + " in " + sheets[sheetNum].getName());
       }
     }
   }
   
-  Logger.log("Finished setting N/A by External");
+  //Get all machine-labeled articles
+  sheet = sheets[2];
+  var data = sheet.getDataRange().getValues();
+  for (var row = 1; row <= 200; row++) {
+    if (data[row][col] == "No / machine-labeled") {
+      arr.push(row);
+    }
+  }
+  //Check for incorrect N/As
+  for (var sheetNum = 3; sheetNum <= 4; sheetNum++) {
+    sheet = sheets[sheetNum];
+    var data = sheet.getDataRange().getValues();
+    for (var row = 1; row <= 200; row++) {
+      if (data[row][col] == "N/A" && arr.indexOf(row) == -1) {
+        Logger.log("Check item " + (row + 1) + " in " + sheets[sheetNum].getName());
+      }
+    }
+  }
+  
+  //Get all external articles
+  sheet = sheets[4];
+  var data = sheet.getDataRange().getValues();
+  for (var row = 1; row <= 200; row++) {
+    if (data[row][col] == "Only external") {
+      arr.push(row);
+    }
+  }
+  //Check for incorrect N/As for all other sheets
+  for (var sheetNum = 5; sheetNum <= 15; sheetNum++) {
+    sheet = sheets[sheetNum];
+    var data = sheet.getDataRange().getValues();
+    for (var row = 1; row <= 200; row++) {
+      if (data[row][col] == "N/A" && arr.indexOf(row) == -1) {
+        Logger.log("Check item " + (row + 1) + " in " + sheets[sheetNum].getName());
+      }
+    }
+  }
+  Logger.log("Finished checking for weird NAs");
 }
